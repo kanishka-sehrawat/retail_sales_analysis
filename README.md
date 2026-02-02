@@ -45,7 +45,7 @@ CREATE DATABASE retail_db
 - **Category Count**: Identify all unique product categories in the dataset.
 - **Null Value Check**: Check for any null values in the dataset and delete records with missing data.
 
-  ``` sql
+``` sql
 select * from retail_sales;
 
 select COUNT(*) as total_rows from retail_sales;
