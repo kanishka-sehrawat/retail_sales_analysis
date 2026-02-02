@@ -48,32 +48,107 @@ CREATE DATABASE retail_db
 ``` sql
 select * from retail_sales;
 
-select COUNT(*) as total_rows from retail_sales;
-select count(*) as total_sales from retail_sales;
+select COUNT(*) as total_rows FROM retail_sales;
 
-1. **how many unique customers we have?
-select count(distinct customer_id) as total_customers from retail_sales;
+1. **How many unique customers we have?
+SELECT COUNT(DISTINCT customer_id) as total_customers FROM retail_sales;
 
-2. **how many unique category we have?
-select distinct category from retail_sales;
+2. **How many unique category we have?
+SELECT DISTINCT category FROM retail_sales;
 
-select * from retail_sales
-where transactions_id is null
-or sale_date is null
-or sale_time is null
-or customer_id is null
-or gender is null
-or age is null
-or category is null
-or quantity is null;
+SELECT * FROM retail_sales
+where  transactions_id is NULL
+OR sale_date is NULL
+OR sale_time is NULL
+OR customer_id is NULL
+OR gender is NULL
+OR age is NULL
+OR category is NULL
+OR quantity is NULL;
 
-delete  from retail_sales 
-where transactions_id is null
-or sale_date is null
-or sale_time is null
-or customer_id is null
-or gender is null
-or age is null
-or category is null
-or quantity is null;
+DELETE FROM retail_sales 
+where transactions_id is NULL
+OR sale_date is NULL
+OR sale_time is NULL
+OR customer_id is NULL
+OR gender is NULL
+OR age is NULL
+OR category is NULL
+OR quantity is NULL;
 ```
+
+### 3.Data Analysis and Findings
+
+The following SQL queries were developed to answer specific business questions:
+
+ Q1. **Write a query to retrieve all columns for sales made on '2022-11-05'
+``` sql
+SELECT * from retail_sales WHERE sale_date ='2022-11-05';
+```
+
+ Q2. **Write a query to retrieve all transactions where the category is clothing and the quantity sold is more than and equal to 4 in the month of Nov-2022
+``` sql
+SELECT * from retail_sales WHERE category='clothing' AND quantity >= 4 AND sale_date like '2022-11%';
+```
+
+Q3. **Write a query to calculate the total sales(total_sales) for each category
+``` sql
+SELECT category,SUM(total_sale) as total_sales from retail_sales GROUP BY category;
+```
+
+Q4. **Write a query to find the average age of customers who purchased items from the 'Beauty' category
+``` sql
+SELECT category,ROUND(AVG(age),2) as avg_age from retail_sales WHERE category ='Beauty';
+```
+
+Q5.**Write a query to find all transactions where the total_sale is greater than 1000
+``` sql
+SELECT * from retail_sales WHERE total_sale>1000;
+```
+
+Q6.** Write the query to find the total number of transactions(transaction_id) made by each gender in each category
+``` sql
+SELECT category,gender,count(transactions_id) as total_transaction from retail_sales GROUP BY  category,gender ORDER BY category;
+```
+
+Q7. **Write a query to calculate the average sale for each month.Find out the best selling month in each year
+``` sql
+SELECT extract(year from sale_date) as year,extract(month from sale_date) as month,avg(total_sale) as avg_sale_per_month,
+RANK() OVER(PARTITION BY extract(year from sale_date) ORDER BY avg(total_sale) desc) as rank_
+from retail_sales GROUP BY extract(year from sale_date) ,extract(month from sale_date);
+```
+
+Q8.**Write a query to find the top 5 customers based on the highest total sale
+``` sql
+SELECT customer_id,SUM(total_sale) as total_sale from retail_sales GROUP BY customer_id ORDER BY sum(total_sale) desc LIMIT 5;
+```
+
+Q9. **Write a query to find the number of unique customers who purchased items from each category
+``` sql
+SELECT category, COUNT(DISTINCT customer_id) as total_customers from retail_sales GROUP BY category;
+```
+
+ Q10. **Write a query to create each shift and number of orders (example Morning<12 , Afternoon between 12 &17 ,evening >17)
+``` sql
+with hourly_sale 
+as
+(SELECT *,CASE WHEN extract(hour from sale_time)<12 THEN'morning'
+WHEN extract(hour from sale_time) between 12 and 17 THEN'afternoon'
+WHEN extract(hour from sale_time)>17 THEN 'evening' 
+END as shift from retail_sales)
+SELECT count(*) as _shiftwise_total_orders,shift from hourly_sale GROUP BY shift;
+```
+
+## Findings
+
+- **Customer Demographics**: The dataset includes customers from various age groups, with sales distributed across different categories such as Clothing and Beauty.
+- **High-Value Transactions**: Several transactions had a total sale amount greater than 1000, indicating premium purchases.
+- **Sales Trends**: Monthly analysis shows variations in sales, helping identify peak seasons.
+- **Customer Insights**: The analysis identifies the top-spending customers and the most popular product categories.
+
+## Reports
+
+- **Sales Summary**: A detailed report summarizing total sales, customer demographics, and category performance.
+- **Trend Analysis**: Insights into sales trends across different months and shifts.
+- **Customer Insights**: Reports on top customers and unique customer counts per category.
+
