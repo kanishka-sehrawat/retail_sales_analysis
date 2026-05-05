@@ -1,12 +1,7 @@
 # Retail Sales Analysis SQL Project
 
 ## Project Overview
-
-**Project Title:- Retail Sale Analysis
-**Level: Beginner
-**Database :'retail_db'
-
-This project is designed to demonstrate SQL skills and techniques typically used by data analysts to explore, clean, and analyze retail sales data. The project involves setting up a retail sales database, performing exploratory data analysis (EDA), and answering specific business questions through SQL queries.
+This project is designed to demonstrate SQL skills and techniques typically used by data analysts to explore and analyze retail sales data. The project involves setting up a retail sales database, performing exploratory data analysis (EDA), and answering specific business questions through SQL queries.
 
 # Project Structure
 
@@ -44,7 +39,7 @@ select * from retail_sales;
 
 select COUNT(*) as total_rows FROM retail_sales;
 
-1. **How many unique customers we have?
+query for: ** unique customers we have.
 SELECT COUNT(DISTINCT customer_id) as total_customers FROM retail_sales;
 
 2. **How many unique category we have?
