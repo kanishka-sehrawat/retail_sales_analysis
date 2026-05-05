@@ -67,17 +67,17 @@ OR quantity is NULL;
 ```
 
 ### 3.Data Analysis and Findings
-** query for:Retrieving all columns for sales made on '2022-11-05' **
+**query for:Retrieving all columns for sales made on '2022-11-05'**
 ``` sql
 SELECT * from retail_sales WHERE sale_date ='2022-11-05';
 ```
 
-query for:**Retrieving all transactions where the category is clothing and the quantity sold is more than and equal to 4 in the month of Nov-2022
+**query for:Retrieving all transactions where the category is clothing and the quantity sold is more than and equal to 4 in the month of Nov-2022**
 ``` sql
 SELECT * from retail_sales WHERE category='clothing' AND quantity >= 4 AND sale_date like '2022-11%';
 ```
 
-query for:**Calculating the total sales(total_sales) for each category
+**query for: Calculating the total sales(total_sales) for each category*
 ``` sql
 SELECT category,SUM(total_sale) as total_sales from retail_sales GROUP BY category;
 ```
