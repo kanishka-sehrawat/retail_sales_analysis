@@ -67,54 +67,63 @@ OR quantity is NULL;
 ```
 
 ### 3.Data Analysis and Findings
-**query for:Retrieving all columns for sales made on '2022-11-05'**
+**query for: Retrieving all columns for sales made on '2022-11-05'**
 ``` sql
 SELECT * from retail_sales WHERE sale_date ='2022-11-05';
 ```
 
-**query for:Retrieving all transactions where the category is clothing and the quantity sold is more than and equal to 4 in the month of Nov-2022**
+**query for: Retrieving all transactions where the category is clothing and the
+quantity sold is more than and equal to 4 in the month of Nov-2022**
 ``` sql
-SELECT * from retail_sales WHERE category='clothing' AND quantity >= 4 AND sale_date like '2022-11%';
+SELECT * from retail_sales WHERE category='clothing' AND quantity >= 4
+AND sale_date like '2022-11%';
 ```
 
-**query for: Calculating the total sales(total_sales) for each category*
+**query for: Calculating the total sales(total_sales) for each category**
 ``` sql
 SELECT category,SUM(total_sale) as total_sales from retail_sales GROUP BY category;
 ```
 
-query for:**Finding the average age of customers who purchased items from the 'Beauty' category
+**query for: Finding the average age of customers who purchased items from the 'Beauty' category**
 ``` sql
 SELECT category,ROUND(AVG(age),2) as avg_age from retail_sales WHERE category ='Beauty';
 ```
 
-query for:**Finding all transactions where the total_sale is greater than 1000
+**query for: Finding all transactions where the total_sale is greater than 1000**
 ``` sql
 SELECT * from retail_sales WHERE total_sale>1000;
 ```
 
-query for:**Finding the total number of transactions(transaction_id) made by each gender in each category
+**query for: Finding the total number of transactions(transaction_id) made by each gender in each category**
 ``` sql
 SELECT category,gender,count(transactions_id) as total_transaction from retail_sales GROUP BY  category,gender ORDER BY category;
 ```
 
-query for:**Calculating the average monthly sales for each year and to identify the best-performing (highest average sales) month in each year.
+**query for:Calculating the average monthly sales for each year and to identify
+the best-performing (highest average sales) month in each year.**
 ``` sql
-SELECT extract(year from sale_date) as year,extract(month from sale_date) as month,avg(total_sale) as avg_sale_per_month,
-RANK() OVER(PARTITION BY extract(year from sale_date) ORDER BY avg(total_sale) desc) as rank_
-from retail_sales GROUP BY extract(year from sale_date) ,extract(month from sale_date);
+with monthly_sales as
+(select extract(year from sale_date) as year_ ,extract(month from sale_date) as month_,
+avg(total_sale) as avg_sales from retail_sales group by year_,month_)
+select year_,month_,avg_sales,rank() over(partition by year_ order by avg_sales desc) 
+as rank_ ,case when rank() over(partition by year_ order by avg_sales desc) = 1 then
+'Best selling month' else ' ' end as remark from monthly_sales ;
 ```
 
-query for:**Finding the top 5 customers based on the highest total sale
+**query for: Finding the top 5 customers based on the highest total sale**
 ``` sql
-SELECT customer_id,SUM(total_sale) as total_sale from retail_sales GROUP BY customer_id ORDER BY sum(total_sale) desc LIMIT 5;
+SELECT customer_id,SUM(total_sale) as total_sale from retail_sales
+GROUP BY customer_id ORDER BY sum(total_sale) desc LIMIT 5;
 ```
 
-query for:**Finding the number of unique customers who purchased items from each category
+**query for: Finding the number of unique customers who purchased items from each category**
 ``` sql
-SELECT category, COUNT(DISTINCT customer_id) as total_customers from retail_sales GROUP BY category;
+SELECT category, COUNT(DISTINCT customer_id) as total_customers from retail_sales
+GROUP BY category;
 ```
 
-query for:**Creating shifts and calculating number of orders wrt shifts(Morning<12 , Afternoon between 12 &17 ,evening >17)
+**query for: Creating shifts and calculating number of orders wrt shifts(Morning<12 ,
+Afternoon between 12 &17 ,evening >17)**
 ``` sql
 with hourly_sale 
 as
