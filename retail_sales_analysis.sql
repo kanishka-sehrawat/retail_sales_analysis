@@ -41,47 +41,51 @@ or quantity is null;
 
 -- DATA EXPLORATION --
 
--- how many sales we have?
+-- query for: total number of sales.
 select count(*) as total_sales from retail_sales;
 
--- how many unique customers we have?
+-- query for: unique customers we have.
 select count(distinct customer_id) as total_customers from retail_sales;
 
--- how many unique category we have?
+-- query for: unique category we have.
 select distinct category from retail_sales;
 
 -- Data analysis and business key problems --
 
--- Q1. Write a query to retrieve all columns for sales made on '2022-11-05'
+-- query for:retrieving all columns for sales made on '2022-11-05'
 select * from retail_sales where sale_date ='2022-11-05';
 
--- Q2.write a query to retrieve all transactions where the category is clothing and the quantity sold is more than and equal to 4 in the month of Nov-2022
+-- query for: retrieving all transactions where the category is clothing and the quantity sold is more than and equal to 4 in the month of Nov-2022
 select * from retail_sales where category='clothing' and quantity >= 4 and sale_date like '2022-11%';
 
--- Q3. Write a query to calculate the total sales(total_sales) for each category
+-- query for: calculating the total sales(total_sales) for each category
 select category,sum(total_sale) as total_sales from retail_sales group by category;
 
--- Q4. Write a query to find the average age of customers who purchased items from the 'Beauty' category
+-- query for :finding the average age of customers who purchased items from the 'Beauty' category
 select category,round(avg(age),2) as avg_age from retail_sales where category ='Beauty';
 
--- Q5.Write a query to find all transactions where the total_sale is greater than 1000
+-- query for: finding all transactions where the total_sale is greater than 1000
 select * from retail_sales where total_sale>1000;
 
--- Q6.Write the query to find the total number of transactions(transaction_id) made by each gender in each category
+-- query for: finding the total number of transactions(transaction_id) made by each gender in each category
 select category,gender,count(transactions_id) as total_transaction from retail_sales group by category,gender order by category;
 
--- Q7. Write a query to calculate the average sale for each month.Find out the best selling month in each year
-select extract(year from sale_date) as year,extract(month from sale_date) as month,avg(total_sale) as avg_sale_per_month,
-rank() over(partition by extract(year from sale_date) order by avg(total_sale) desc) as rank_
-from retail_sales group by extract(year from sale_date) ,extract(month from sale_date);
+-- query for:Q7.Calculating the average monthly sales for each year and to identify the best-performing
+-- (highest average sales) month in each year.
+with monthly_sales as
+(select extract(year from sale_date) as year_ ,extract(month from sale_date) as month_,
+avg(total_sale) as avg_sales from retail_sales group by year_,month_)
+select year_,month_,avg_sales,rank() over(partition by year_ order by avg_sales desc) 
+as rank_ ,case when rank() over(partition by year_ order by avg_sales desc) = 1 then
+'Best selling month' else ' ' end as remark from monthly_sales ;
 
--- Q8.Write a query to find the top 5 customers based on the highest total sale
+-- query for: finding the top 5 customers based on the highest total sale
 select customer_id,sum(total_sale) as total_sale from retail_sales group by customer_id order by sum(total_sale) desc limit 5;
 
--- Q9. Write a query to find the number of unique customers who purchased items from each category
+-- query for: finding the number of unique customers who purchased items from each category
 select category, count(distinct customer_id) as total_customers from 	retail_sales group by category;
 
--- Q10. Write a query to create each shift and number of orders (example Morning<12 , Afternoon between 12 &17 ,evening >17)
+-- query for: creating shifts and calculating the number of orders wrt shifts(Morning<12 , Afternoon between 12 &17 ,evening >17)
 with hourly_sale 
 as
 (select *,case when extract(hour from sale_time)<12 then 'morning'
