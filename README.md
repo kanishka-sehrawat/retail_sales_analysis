@@ -67,7 +67,7 @@ OR quantity is NULL;
 ```
 
 ### 3.Data Analysis and Findings
-query for:**Retrieving all columns for sales made on '2022-11-05'
+** query for:Retrieving all columns for sales made on '2022-11-05' **
 ``` sql
 SELECT * from retail_sales WHERE sale_date ='2022-11-05';
 ```
